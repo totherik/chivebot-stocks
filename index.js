@@ -15,7 +15,9 @@ module.exports = {
         plugin.dependency('chivebot', function (plugin, next) {
 
             plugin.plugins.chivebot.registerCommand('price', function (raw, args, cb) {
-                nipple.request('GET', 'http://finance.google.com/finance/info?client=ig&q=' + args[0], {}, function (err, res) {
+                var symbol = args[1];
+                
+                nipple.request('GET', 'http://finance.google.com/finance/info?client=ig&q=' + symbol, {}, function (err, res) {
                     if (err) {
                         return cb(err);
                     }
@@ -26,7 +28,7 @@ module.exports = {
                         }    
 
                         if (!body.length) {
-                            return cb(null, 'I couldn\'t find the symbol \'' + args[0] + '\'.');    
+                            return cb(null, 'I couldn\'t find the symbol \'' + symbol + '\'.');    
                         }
 
                         body = JSON.parse(body.slice(3));
