@@ -15,8 +15,8 @@ module.exports = {
         plugin.dependency('chivebot', function (plugin, next) {
 
             plugin.plugins.chivebot.registerCommand('price', function (raw, args, cb) {
-                var symbol = args[1];
-                
+                var symbol = args[2];
+
                 nipple.request('GET', 'http://finance.google.com/finance/info?client=ig&q=' + symbol, {}, function (err, res) {
                     if (err) {
                         return cb(err);
