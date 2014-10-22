@@ -1,49 +1,61 @@
 'use strict';
 
-var pkg = require('./package'),
-    nipple = require('nipple');
+var Url = require('url');
+var Wreck = require('wreck');
+var Package = require('./package');
 
 
-module.exports = {
+var URL = 'http://finance.google.com/finance/info';
 
-    name: pkg.name,
+exports.register = function (plugin, options, next) {
 
-    version: pkg.version,
+    plugin.dependency('chivebot', function (plugin, next) {
 
-    register: function (plugin, options, next) {
+        plugin.plugins.chivebot.registerCommand('price', function (raw, args, cb) {
+            var symbol, url;
 
-        plugin.dependency('chivebot', function (plugin, next) {
+            symbol = args._[2];
+            url = Url.parse(URL);
+            url.query = {
+                client: 'i',
+                q: symbol
+            };
 
-            plugin.plugins.chivebot.registerCommand('price', function (raw, args, cb) {
-                var symbol = args[2];
+            Wreck.get(url.format(), {}, function (err, res, payload) {
+                var json, data;
 
-                nipple.request('GET', 'http://finance.google.com/finance/info?client=ig&q=' + symbol, {}, function (err, res) {
-                    if (err) {
-                        return cb(err);
-                    }
+                if (err) {
+                    cb(err);
+                    return
+                }
 
-                    nipple.read(res, function (err, body) {
-                        if (err) {
-                            return cb(err);
-                        }    
+                if (!payload.length) {
+                    cb(null, 'I couldn\'t find the symbol \'' + symbol + '\'.');
+                    return;
+                }
 
-                        if (!body.length) {
-                            return cb(null, 'I couldn\'t find the symbol \'' + symbol + '\'.');    
-                        }
+                try {
 
-                        body = JSON.parse(body.slice(3));
+                    // Remove leading comment: '// '
+                    payload = payload.slice(3);
+                    json = JSON.parse(payload);
+                    data = json[0];
 
-                        return cb(null, 'The price of ' + body[0].t + ' is $' + body[0].l_cur +  '.');
-                    });
-                });
+                    cb(null, 'The price of ' + data.t + ' is $' + data.l_cur +  '.');
+
+                } catch (err) {
+                    cb(err);
+                }
             });
-
-            next();
-
         });
 
         next();
+    });
 
-    }
+    next();
+};
 
+
+exports.register.attributes = {
+    pkg: Package
 };

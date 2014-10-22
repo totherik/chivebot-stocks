@@ -3,14 +3,19 @@
   "version": "0.0.0",
   "description": "ERROR: No README.md file found!",
   "main": "index.js",
-  "scripts": {
-    "test": "tape test/*.js"
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/totherik/chivebot-stocks.git"
   },
-  "repository": "",
-  "author": "",
+  "author": "Erik Toth <totherik@gmail.com>",
   "license": "BSD",
-  "readmeFilename": "README.md",
   "dependencies": {
-    "nipple": "~2.2.0"
-  }
+    "wreck": "^5.0.1"
+  },
+  "devDependencies": {},
+  "bugs": {
+    "url": "https://github.com/totherik/chivebot-stocks/issues"
+  },
+  "homepage": "https://github.com/totherik/chivebot-stocks"
 }
